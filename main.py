@@ -1,36 +1,23 @@
 
 from auth import google_auth
+from invoices_db import get_invoice_number
 
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+from datetime import datetime
 
-from config import SPREADSHEET_ID
-    
-RANGE = 'A1:Z100'
 
 def main(): 
     # print("Hello World")
     creds = google_auth()
 
-    try:
-        service = build('sheets', 'v4', credentials=creds)
-        sheet = service.spreadsheets()
+    invoice_number = 0
+    invoice_date = datetime.today().strftime('%m/%d/%Y')
+    print(invoice_date)
 
-        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE).execute()
+    if (invoice_number == 0):
+        invoice_number = get_invoice_number(creds)
 
-        values = result.get('values', [])
-
-        if not values:
-            print("No data found")
-            return
-
-        for row in values:
-            print(row)
-            # print("%s %s %s %s %s" % (row[0], row[1], row[2], row[3], row[4]))
-
-
-    except HttpError as err:
-        print(err)
+    print(invoice_number)
+    print('---')
 
 
 if __name__ == "__main__": 
