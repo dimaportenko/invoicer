@@ -6,7 +6,6 @@ from datetime import datetime
 
 
 def main(): 
-    # print("Hello World")
     creds = google_auth()
 
     invoice_number = 0
@@ -15,6 +14,9 @@ def main():
 
     if (invoice_number == 0):
         invoice_number = get_invoice_number(creds)
+
+
+
 
     print(invoice_number)
     print('---')
