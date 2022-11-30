@@ -2,7 +2,7 @@
 
 - [x] get invoice number
 - [x] get invoice date
-- [ ] copy template file with google drive api
+- [x] copy template file with google drive api
 - [ ] get google doc invoice template
 - [ ] replace required fields 
 - [ ] create invoice google doc
