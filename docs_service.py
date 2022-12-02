@@ -2,12 +2,12 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-def get_document(google_creds, documentId):
+def get_document(google_creds, document_id):
     try:
         service = build('docs', 'v1', credentials=google_creds)
 
         # Retrieve the documents contents from the Docs service.
-        document = service.documents().get(documentId=documentId).execute()
+        document = service.documents().get(documentId=document_id).execute()
 
         print('The title of the document is: {}'.format(document.get('title')))
 
@@ -15,3 +15,15 @@ def get_document(google_creds, documentId):
     except HttpError as err:
         print(err)
         return None
+
+def batch_update(document_id, requests, google_creds):
+    try:
+        service = build('docs', 'v1', credentials=google_creds)
+        result = service.documents().batchUpdate(documentId=document_id, body={'requests': requests}).execute()
+
+        return result
+
+    except HttpError as err:
+        print(err)
+        return None
+
