@@ -2,7 +2,8 @@
 from auth import google_auth
 from drive_service import copy_invoice_template
 from sheet_service import get_invoice_number
-from docs_service import batch_update, get_document, batch_update
+from docs_service import get_document, replace_template_values
+from utils import getUADateWithDate
 
 from datetime import datetime
 
@@ -24,23 +25,16 @@ def main():
     document = get_document(google_creds=creds, document_id=document_copy_id)
     if (document != None):
         print(document.get('title'))
-        # get google doc body text
 
-        # ReplaceAllTextRequest {invoiceNumber} with invoice_number
-        requests = [
-             {
-                'replaceAllText': {
-                    'replaceText': str(invoice_number),
-                    'containsText': {
-                        'text': '{invoiceNumber}',
-                        'matchCase': True
-                    }
-                }
-            },
-        ]
+        params = {
+            'invoiceNumber': str(invoice_number),
+            'date': invoice_date,
+            'ua_date': getUADateWithDate(invoice_date)
+        }
 
-        batch_update(document_id=document_copy_id, requests=requests, google_creds=creds)
+        result = replace_template_values(document_id=document_copy_id, params=params, google_creds=creds)
 
+        print(result)
         
 
 
