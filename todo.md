@@ -4,8 +4,7 @@
 - [x] get invoice date
 - [x] copy template file with google drive api
 - [x] get google doc invoice (template copy)
-- [ ] replace required fields 
-- [ ] create invoice google doc
-- [ ] download pdf
+- [x] replace required fields 
+- [x] download pdf
 - [ ] send pdf email
 

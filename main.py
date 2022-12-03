@@ -1,6 +1,6 @@
 
 from auth import google_auth
-from drive_service import copy_invoice_template
+from drive_service import copy_invoice_template, export_pdf
 from sheet_service import get_invoice_number
 from docs_service import get_document, replace_template_values
 from utils import getUADateWithDate
@@ -24,7 +24,8 @@ def main():
 
     document = get_document(google_creds=creds, document_id=document_copy_id)
     if (document != None):
-        print(document.get('title'))
+        title = document.get('title')
+        print(title)
 
         params = {
             'invoiceNumber': str(invoice_number),
@@ -36,6 +37,12 @@ def main():
 
         print(result)
         
+        pfdFile = export_pdf(google_creds=creds, document_id=document_copy_id)
+
+        if (pfdFile != None):
+            # save io file to ./docs/{title}.pdf
+            with open(f'./docs/{title}.pdf', 'wb') as f:
+                f.write(pfdFile.getbuffer())
 
 
 if __name__ == "__main__": 

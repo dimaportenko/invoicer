@@ -3,8 +3,13 @@
 .venv
 .env
 
+.DS_Store
+
 __pycache__
 
+# google auth secret data
 client_secret.json
 token.json
 
+# directory for downloaded documents
+docs

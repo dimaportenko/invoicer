@@ -1,5 +1,8 @@
+import io
+
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
 
 from config import TEMPLATE_DOC_ID
 
@@ -22,3 +25,23 @@ def copy_invoice_template(google_creds, invoice_number):
         # TODO(developer) - Handle errors from drive API.
         print(f'An error occurred: {error}')
 
+def export_pdf(google_creds, document_id):
+    try:
+        # create drive api client
+        service = build('drive', 'v3', credentials=google_creds)
+
+        # pylint: disable=maybe-no-member
+        request = service.files().export_media(fileId=document_id,
+                                               mimeType='application/pdf')
+        file = io.BytesIO()
+        downloader = MediaIoBaseDownload(file, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print(F'Download {int(status.progress() * 100)}.')
+
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        file = None
+
+    return file
