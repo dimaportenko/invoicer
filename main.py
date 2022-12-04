@@ -15,10 +15,17 @@ def main():
     invoice_date = datetime.today().strftime('%m/%d/%Y')
     print(invoice_date)
 
-    if (invoice_number == 0):
-        invoice_number = get_invoice_number(creds)
+    invoice_number = get_invoice_number(gauth_creds=creds)
+
+    if (invoice_number == None):
+        print("ERR!! Can't retrieve invoice number")
+        return 0
 
     document_copy_id = copy_invoice_template(google_creds=creds, invoice_number=invoice_number)
+    if (document_copy_id == None):
+        print("ERR!! Can't retrieve invoice template")
+        return 0
+
     print(document_copy_id)
     print('---')
 

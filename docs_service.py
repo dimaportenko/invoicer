@@ -1,10 +1,8 @@
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from google.oauth2.credentials import Credentials
 
-
-def get_document(google_creds: Credentials, document_id: str):
+def get_document(google_creds, document_id: str):
     try:
         service = build('docs', 'v1', credentials=google_creds)
 
@@ -18,7 +16,7 @@ def get_document(google_creds: Credentials, document_id: str):
         print(err)
         return None
 
-def replace_template_values(document_id: str, params: dict[str, str], google_creds: Credentials):
+def replace_template_values(document_id: str, params: dict[str, str], google_creds):
     try:
         service = build('docs', 'v1', credentials=google_creds)
 
