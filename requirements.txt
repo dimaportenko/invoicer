@@ -5,3 +5,5 @@ google-auth-oauthlib
 python-dotenv
 
 pandas
+
+tqdm

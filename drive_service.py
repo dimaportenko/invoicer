@@ -1,5 +1,7 @@
 import io
 
+from tqdm import tqdm
+
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
@@ -36,9 +38,16 @@ def export_pdf(google_creds, document_id):
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
         done = False
+        progressBar = tqdm(total=100)
         while done is False:
             status, done = downloader.next_chunk()
-            print(F'Download {int(status.progress() * 100)}.')
+            progress = int(status.progress() * 100)
+
+            print(F'Download {progress}.')
+            progressBar.update(progress)
+
+        progressBar.close()
+
 
     except HttpError as error:
         print(F'An error occurred: {error}')
