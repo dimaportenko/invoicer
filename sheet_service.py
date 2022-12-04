@@ -3,12 +3,13 @@ import pandas as pd
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from google.oauth2.credentials import Credentials
 
 from config import SPREADSHEET_ID
     
 RANGE = 'A1:Z100'
 
-def get_invoice_number(gauth_creds):
+def get_invoice_number(gauth_creds: Credentials):
     try:
         service = build('sheets', 'v4', credentials=gauth_creds)
         sheet = service.spreadsheets()

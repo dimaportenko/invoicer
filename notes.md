@@ -7,3 +7,4 @@
 - [Google Docs Quickstart](https://developers.google.com/docs/api/quickstart/python)
 - [Google Drive Quickstart](https://developers.google.com/drive/api/quickstart/python) basically for create new doc from the template
 - [Download Document as PDF](https://github.com/googleworkspace/python-samples/blob/main/drive/snippets/drive-v3/file_snippet/export_pdf.py)
+- [Gmail Api Quickstart](https://developers.google.com/gmail/api/quickstart/python)

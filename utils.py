@@ -15,7 +15,7 @@ monthsUa = {
 
 
 # date format is mm/dd/yyyy
-def getUADateWithDate(date):
+def getUADateWithDate(date: str):
     # string with day + monthsUa value + year
     dateUa = date.split('/')[1].lstrip('0') + ' ' + monthsUa[date.split('/')[0]] + ' ' + date.split('/')[2]
     return dateUa

@@ -7,4 +7,5 @@
 - [x] replace required fields 
 - [x] download pdf
 - [ ] send pdf email
+- [ ] get values for email compose from the spreadsheet
 
