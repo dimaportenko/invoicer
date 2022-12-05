@@ -9,7 +9,7 @@ from googleapiclient.http import MediaIoBaseDownload
 
 from config import TEMPLATE_DOC_ID
 
-def copy_invoice_template(google_creds, invoice_number: int | str): 
+def copy_invoice_template(google_creds, invoice_number: int): 
     try:
         drive_service = build('drive', 'v3', credentials=google_creds)
 

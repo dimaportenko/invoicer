@@ -1,6 +1,7 @@
 
 from auth import google_auth
 from drive_service import copy_invoice_template, export_pdf
+from gmail_service import gmail_create_draft_with_attachment, gmail_create_message_with_attachment
 from sheet_service import get_invoice_number
 from docs_service import get_document, replace_template_values
 from utils import getUADateWithDate
@@ -44,13 +45,25 @@ def main():
 
         print(result)
         
-        pfdFile = export_pdf(google_creds=creds, document_id=document_copy_id)
+        pfd_file = export_pdf(google_creds=creds, document_id=document_copy_id)
 
-        if (pfdFile != None):
+        pdf_file_path = f'./docs/{title}.pdf'
+        if (pfd_file != None):
             # save io file to ./docs/{title}.pdf
-            with open(f'./docs/{title}.pdf', 'wb') as f:
-                f.write(pfdFile.getbuffer())
+            with open(pdf_file_path, 'wb') as f:
+                f.write(pfd_file.getbuffer())
 
+
+        if pdf_file_path == None:
+            print("ERR!! Can't export pdf")
+            return 0
+
+        message = gmail_create_message_with_attachment(to="test@gmail.com",  subject="Test subject message", file=pdf_file_path)
+        if message == None:
+            print("ERR!! Can't create message")
+            return 0
+
+        gmail_create_draft_with_attachment(gauth_creds=creds, message=message)
 
 if __name__ == "__main__": 
     main()

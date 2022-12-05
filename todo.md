@@ -6,6 +6,8 @@
 - [x] get google doc invoice (template copy)
 - [x] replace required fields 
 - [x] download pdf
+- [x] compose pdf message
+- [x] create draft
 - [ ] send pdf email
 - [ ] get values for email compose from the spreadsheet
-
+- [ ] refactor 
