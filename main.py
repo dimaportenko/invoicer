@@ -30,7 +30,7 @@ def main():
     print(document_copy_id)
     print('---')
 
-    document = get_document(google_creds=creds, document_id=document_copy_id)
+    document = get_document(document_id=document_copy_id)
     if (document != None):
         title = document.get('title')
         print(title)
@@ -41,7 +41,7 @@ def main():
             'ua_date': getUADateWithDate(invoice_date)
         }
 
-        result = replace_template_values(document_id=document_copy_id, params=params, google_creds=creds)
+        result = replace_template_values(document_id=document_copy_id, params=params)
 
         print(result)
         
