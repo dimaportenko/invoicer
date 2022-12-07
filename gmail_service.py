@@ -51,18 +51,13 @@ def create_message_request_with_attachment(message: EmailMessage):
 
 
 
-def gmail_create_message_with_attachment(to: str, subject: str, file: str):
+def gmail_create_message_with_attachment(params: dict[str,str], msg_body: str, file: str):
     mime_message = EmailMessage()
 
-    # headers
-    mime_message['To'] = to
-    # mime_message['From'] = From
-    mime_message['Subject'] = subject
-    # text
-    mime_message.set_content(
-        'Hi, this is automated mail with attachment.'
-        'Please do not reply.'
-    )
+    for key, value in params.items():
+        mime_message[key] = value
+
+    mime_message.set_content(msg_body)
 
     # guessing the MIME type
     type_subtype, _ = mimetypes.guess_type(file)

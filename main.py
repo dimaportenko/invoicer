@@ -2,7 +2,7 @@
 from auth import google_auth
 from drive_service import copy_invoice_template, export_pdf
 from gmail_service import gmail_create_draft_with_attachment, gmail_create_message_with_attachment
-from sheet_service import get_invoice_number
+from sheet_service import get_invoice_number, get_db_sheet
 from docs_service import get_document, replace_template_values
 from utils import getUADateWithDate
 
@@ -16,7 +16,7 @@ def main():
     invoice_date = datetime.today().strftime('%m/%d/%Y')
     print(invoice_date)
 
-    invoice_number = get_invoice_number(gauth_creds=creds)
+    invoice_number = get_invoice_number()
 
     if (invoice_number == None):
         print("ERR!! Can't retrieve invoice number")
@@ -58,12 +58,46 @@ def main():
             print("ERR!! Can't export pdf")
             return 0
 
-        message = gmail_create_message_with_attachment(to="test@gmail.com",  subject="Test subject message", file=pdf_file_path)
+        dataframe_db = get_db_sheet()
+        if (dataframe_db.empty):
+            print("ERR!! Can't retrieve db")
+            return 0
+
+        # get first value from pandas dataframe email_to column
+        email_to = dataframe_db['email_to'].iloc[0]
+        # get not empty values from email_cc column
+        email_cc = dataframe_db[dataframe_db['email_cc'].notnull()]['email_cc'].values.tolist()
+        email_cc_str = ','.join(email_cc)
+
+        month_date = datetime.today().strftime('%B %Y')
+        subject = f'Invoice #{invoice_number} {month_date}'
+
+        body_template = dataframe_db['email_body'].iloc[0]
+        # subject from template with {{invoiceNumber}} and {{date}}
+        # Invoice #{{invoice_number}} {{date}} in attachment"
+        msg_body = body_template.replace('{{invoice_number}}', str(invoice_number)).replace('{{date}}', month_date)
+        # msg_body = body_template.format(invoice_number=invoice_number, date=month_date)
+
+        message_params = {
+            'To': email_to,
+            'CC': email_cc_str,
+            'Subject': subject, 
+        }
+
+        # message = gmail_create_message_with_attachment(to="",  subject="Test subject message", file=pdf_file_path)
+
+        # msg_body = f'Invoice #{invoice_number}'
+        message = gmail_create_message_with_attachment(params=message_params, file=pdf_file_path, msg_body=msg_body)
+
+        print(message)
         if message == None:
             print("ERR!! Can't create message")
             return 0
 
         gmail_create_draft_with_attachment(gauth_creds=creds, message=message)
+
+        
+
 
 if __name__ == "__main__": 
     main()
