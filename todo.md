@@ -9,7 +9,7 @@
 - [x] compose pdf message
 - [x] create draft
 - [ ] send pdf email
-- [ ] get values for email compose from the spreadsheet
+- [x] get values for email compose from the spreadsheet
 - [ ] add record about generated email
 
 - [ ] refactor 

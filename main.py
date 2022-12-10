@@ -22,7 +22,13 @@ def main():
         print("ERR!! Can't retrieve invoice number")
         return 0
 
-    document_copy_id = copy_invoice_template(google_creds=creds, invoice_number=invoice_number)
+    dataframe_db = get_db_sheet()
+    if (dataframe_db.empty):
+        print("ERR!! Can't retrieve db")
+        return 0
+
+    doc_title = dataframe_db['invoice_title'].iloc[0] + '_' + str(invoice_number)
+    document_copy_id = copy_invoice_template(doc_title=doc_title)
     if (document_copy_id == None):
         print("ERR!! Can't retrieve invoice template")
         return 0
@@ -31,70 +37,70 @@ def main():
     print('---')
 
     document = get_document(document_id=document_copy_id)
-    if (document != None):
-        title = document.get('title')
-        print(title)
+    if (document == None):
+        print("ERR!! Can't retrieve document")
+        return 0
 
-        params = {
-            'invoiceNumber': str(invoice_number),
-            'date': invoice_date,
-            'ua_date': getUADateWithDate(invoice_date)
-        }
+    title = document.get('title')
+    print(title)
 
-        result = replace_template_values(document_id=document_copy_id, params=params)
+    params = {
+        'invoiceNumber': str(invoice_number),
+        'date': invoice_date,
+        'ua_date': getUADateWithDate(invoice_date)
+    }
 
-        print(result)
-        
-        pfd_file = export_pdf(google_creds=creds, document_id=document_copy_id)
+    result = replace_template_values(document_id=document_copy_id, params=params)
 
-        pdf_file_path = f'./docs/{title}.pdf'
-        if (pfd_file != None):
-            # save io file to ./docs/{title}.pdf
-            with open(pdf_file_path, 'wb') as f:
-                f.write(pfd_file.getbuffer())
+    print(result)
+    
+    pdf_file = export_pdf(document_id=document_copy_id)
+    if pdf_file is None:
+        print("ERR!! Can't retrieve pdf file")
+        return 0
+
+    pdf_file_path = f'./docs/{title}.pdf'
+    with open(pdf_file_path, 'wb') as f:
+        f.write(pdf_file.getbuffer())
 
 
-        if pdf_file_path == None:
-            print("ERR!! Can't export pdf")
-            return 0
+    if pdf_file_path is None:
+        print("ERR!! Can't export pdf")
+        return 0
 
-        dataframe_db = get_db_sheet()
-        if (dataframe_db.empty):
-            print("ERR!! Can't retrieve db")
-            return 0
 
-        # get first value from pandas dataframe email_to column
-        email_to = dataframe_db['email_to'].iloc[0]
-        # get not empty values from email_cc column
-        email_cc = dataframe_db[dataframe_db['email_cc'].notnull()]['email_cc'].values.tolist()
-        email_cc_str = ','.join(email_cc)
+    # get first value from pandas dataframe email_to column
+    email_to = dataframe_db['email_to'].iloc[0]
+    # get not empty values from email_cc column
+    email_cc = dataframe_db[dataframe_db['email_cc'].notnull()]['email_cc'].values.tolist()
+    email_cc_str = ','.join(email_cc)
 
-        month_date = datetime.today().strftime('%B %Y')
-        subject = f'Invoice #{invoice_number} {month_date}'
+    month_date = datetime.today().strftime('%B %Y')
+    subject = f'Invoice #{invoice_number} {month_date}'
 
-        body_template = dataframe_db['email_body'].iloc[0]
-        # subject from template with {{invoiceNumber}} and {{date}}
-        # Invoice #{{invoice_number}} {{date}} in attachment"
-        msg_body = body_template.replace('{{invoice_number}}', str(invoice_number)).replace('{{date}}', month_date)
-        # msg_body = body_template.format(invoice_number=invoice_number, date=month_date)
+    body_template = dataframe_db['email_body'].iloc[0]
+    # subject from template with {{invoiceNumber}} and {{date}}
+    # Invoice #{{invoice_number}} {{date}} in attachment"
+    msg_body = body_template.replace('{{invoice_number}}', str(invoice_number)).replace('{{date}}', month_date)
+    # msg_body = body_template.format(invoice_number=invoice_number, date=month_date)
 
-        message_params = {
-            'To': email_to,
-            'CC': email_cc_str,
-            'Subject': subject, 
-        }
+    message_params = {
+        'To': email_to,
+        'CC': email_cc_str,
+        'Subject': subject, 
+    }
 
-        # message = gmail_create_message_with_attachment(to="",  subject="Test subject message", file=pdf_file_path)
+    # message = gmail_create_message_with_attachment(to="",  subject="Test subject message", file=pdf_file_path)
 
-        # msg_body = f'Invoice #{invoice_number}'
-        message = gmail_create_message_with_attachment(params=message_params, file=pdf_file_path, msg_body=msg_body)
+    # msg_body = f'Invoice #{invoice_number}'
+    message = gmail_create_message_with_attachment(params=message_params, file=pdf_file_path, msg_body=msg_body)
 
-        print(message)
-        if message == None:
-            print("ERR!! Can't create message")
-            return 0
+    print(message)
+    if message == None:
+        print("ERR!! Can't create message")
+        return 0
 
-        gmail_create_draft_with_attachment(gauth_creds=creds, message=message)
+    gmail_create_draft_with_attachment(gauth_creds=creds, message=message)
 
         
 
