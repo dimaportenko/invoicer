@@ -1,5 +1,3 @@
-
-from auth import google_auth
 from drive_service import copy_invoice_template, export_pdf
 from gmail_service import gmail_create_draft_with_attachment, gmail_create_message_with_attachment
 from sheet_service import get_invoice_number, get_db_sheet, add_invoice_record_to_sheet
@@ -10,8 +8,6 @@ from datetime import datetime
 
 
 def main(): 
-    creds = google_auth()
-
     invoice_number = 0
     invoice_date = datetime.today().strftime('%m/%d/%Y')
     print(invoice_date)

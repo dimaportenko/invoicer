@@ -11,7 +11,7 @@ SCOPES = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-def google_auth ():
+def google_auth():
     creds = None
 
     if os.path.exists('token.json'):
