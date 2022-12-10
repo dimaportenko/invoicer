@@ -1,24 +1,12 @@
 import pandas as pd
 
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
 from config import SPREADSHEET_ID
-from auth import google_auth
+from google_services import get_google_service
     
-RANGE = 'A1:Z100'
-
-def get_sheets_service():
-    try:
-        google_creds = google_auth()
-        service = build('sheets', 'v4', credentials=google_creds)
-        return service
-    except HttpError as err:
-        print(err)
-        return None
+RANGE = 'A1:Z200'
 
 # get sheets service object
-sheets_service = get_sheets_service()
+sheets_service = get_google_service('sheets', 'v4')
 
 def get_db_sheet():
     if SPREADSHEET_ID == None or sheets_service is None:

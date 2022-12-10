@@ -100,7 +100,7 @@ def main():
         print("ERR!! Can't create message")
         return 0
 
-    gmail_create_draft_with_attachment(gauth_creds=creds, message=message)
+    gmail_create_draft_with_attachment(message=message)
 
     invoice_doc_link = f'https://docs.google.com/document/d/{document_copy_id}/edit'
     add_invoice_record_to_sheet({

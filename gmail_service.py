@@ -6,10 +6,12 @@ import mimetypes
 import os
 from email.message import EmailMessage
 
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+from google_services import get_google_service
 
-def gmail_create_draft_with_attachment(gauth_creds, message: EmailMessage):
+
+gmail_service = get_google_service(serviceName='gmail', version='v1')
+
+def gmail_create_draft_with_attachment(message: EmailMessage):
 
     if message is None:
         print('ERR!! Can\'t create message')
@@ -17,20 +19,15 @@ def gmail_create_draft_with_attachment(gauth_creds, message: EmailMessage):
 
     message_request = create_message_request_with_attachment(message)
 
-    try:
+    if gmail_service is None:
+        print('ERR!! Can\'t create gmail service')
+        return None
 
-        # create gmail api client
-        service = build('gmail', 'v1', credentials=gauth_creds)
-            # pylint: disable=E1101
-        draft = service.users().drafts().create(userId="me",
-                                                body=message_request)\
-            .execute()
-        print(F'Draft id: {draft["id"]}\nDraft message: {draft["message"]}')
-
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        draft = None
-    return draft
+    draft = gmail_service.users().drafts().create(
+        userId="me",
+        body=message_request
+    ).execute()
+    print(F'Draft id: {draft["id"]}\nDraft message: {draft["message"]}')
 
 
 def create_message_request_with_attachment(message: EmailMessage):

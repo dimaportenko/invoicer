@@ -1,19 +1,7 @@
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from auth import google_auth
+from google_services import get_google_service
 
 
-def get_docs_service():
-    try:
-        google_creds = google_auth()
-        service = build('docs', 'v1', credentials=google_creds)
-        return service
-    except HttpError as err:
-        print(err)
-        return None
-
-# get docs service object
-docs_service = get_docs_service()
+docs_service = get_google_service('docs', 'v1')
 
 def get_document(document_id: str):
 

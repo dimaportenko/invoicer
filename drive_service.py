@@ -1,27 +1,13 @@
 import io
 
 from tqdm import tqdm
-
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 
-from auth import google_auth
-
+from google_services import get_google_service
 from config import TEMPLATE_DOC_ID
 
 
-def get_drive_service():
-    try:
-        google_creds = google_auth()
-        service = build('drive', 'v3', credentials=google_creds)
-        return service
-    except HttpError as err:
-        print(err)
-        return None
-
-# get drive service object
-drive_service = get_drive_service()
+drive_service = get_google_service('drive', 'v3')
 
 def copy_invoice_template(doc_title: str):
     body = {
