@@ -10,6 +10,6 @@
 - [x] create draft
 - [ ] send pdf email
 - [x] get values for email compose from the spreadsheet
-- [ ] add record about generated email
+- [x] add record about generated email
 
 - [ ] refactor 

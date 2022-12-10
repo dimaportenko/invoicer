@@ -2,7 +2,7 @@
 from auth import google_auth
 from drive_service import copy_invoice_template, export_pdf
 from gmail_service import gmail_create_draft_with_attachment, gmail_create_message_with_attachment
-from sheet_service import get_invoice_number, get_db_sheet
+from sheet_service import get_invoice_number, get_db_sheet, add_invoice_record_to_sheet
 from docs_service import get_document, replace_template_values
 from utils import getUADateWithDate
 
@@ -102,6 +102,12 @@ def main():
 
     gmail_create_draft_with_attachment(gauth_creds=creds, message=message)
 
+    invoice_doc_link = f'https://docs.google.com/document/d/{document_copy_id}/edit'
+    add_invoice_record_to_sheet({
+        'invoice_number': invoice_number,
+        'invoice_date': invoice_date,
+        'invoice_doc': invoice_doc_link,
+    })
         
 
 
