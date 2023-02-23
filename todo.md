@@ -11,5 +11,6 @@
 - [ ] send pdf email
 - [x] get values for email compose from the spreadsheet
 - [x] add record about generated email
+- [ ] re-auth if token outdated
 
 - [ ] refactor 
