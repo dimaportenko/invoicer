@@ -1,6 +1,6 @@
 # Invoicer
 
-Python script to generate invoice template from the google doc template. 
+Python script to generate invoice pdf from the google doc template and send it over gmail. 
 
 
 ## Local usage 
