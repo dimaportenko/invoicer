@@ -13,4 +13,4 @@ python main.py
 ```
 
 ## TODO
-- [ ] token refresh logic (meanwhiole do `rm token.json`)
+- [x] reauth on failed refresh token action
