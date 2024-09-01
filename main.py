@@ -3,8 +3,8 @@ from gmail_service import gmail_create_draft_with_attachment, gmail_create_messa
 from sheet_service import get_invoice_number, get_db_sheet, add_invoice_record_to_sheet
 from docs_service import get_document, replace_template_values
 from utils import getUADateWithDate
-
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 def main(): 
@@ -14,7 +14,7 @@ def main():
 
     invoice_number = get_invoice_number()
 
-    if (invoice_number == None):
+    if (invoice_number is None):
         print("ERR!! Can't retrieve invoice number")
         return 0
 
@@ -25,7 +25,7 @@ def main():
 
     doc_title = dataframe_db['invoice_title'].iloc[0] + '_' + str(invoice_number)
     document_copy_id = copy_invoice_template(doc_title=doc_title)
-    if (document_copy_id == None):
+    if (document_copy_id is None):
         print("ERR!! Can't retrieve invoice template")
         return 0
 
@@ -33,7 +33,7 @@ def main():
     print('---')
 
     document = get_document(document_id=document_copy_id)
-    if (document == None):
+    if (document is None):
         print("ERR!! Can't retrieve document")
         return 0
 
@@ -71,7 +71,9 @@ def main():
     email_cc = dataframe_db[dataframe_db['email_cc'].notnull()]['email_cc'].values.tolist()
     email_cc_str = ','.join(email_cc)
 
-    month_date = datetime.today().strftime('%B %Y')
+    # Get the previous month date
+    previous_month_date = datetime.today() - relativedelta(months=1)
+    month_date = previous_month_date.strftime('%B %Y')
     subject = f'Invoice #{invoice_number} {month_date}'
 
     body_template = dataframe_db['email_body'].iloc[0]
@@ -92,7 +94,7 @@ def main():
     message = gmail_create_message_with_attachment(params=message_params, file=pdf_file_path, msg_body=msg_body)
 
     print(message)
-    if message == None:
+    if message is None:
         print("ERR!! Can't create message")
         return 0
 

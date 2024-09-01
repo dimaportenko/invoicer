@@ -9,7 +9,7 @@ RANGE = 'A1:Z200'
 sheets_service = get_google_service('sheets', 'v4')
 
 def get_db_sheet():
-    if SPREADSHEET_ID == None or sheets_service is None:
+    if SPREADSHEET_ID is None or sheets_service is None:
         return pd.DataFrame()
 
     sheet = sheets_service.spreadsheets()

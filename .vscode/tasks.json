@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Python Environment",
+            "type": "shell",
+            "command": "source venv/bin/activate",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Main Script",
+            "type": "shell",
+            "command": "python main.py",
+            "problemMatcher": []
+        },
+        {
+            "label": "PY: Run Main with Python Environment",
+            "dependsOn": [
+                "Run Python Environment",
+                "Run Main Script"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
