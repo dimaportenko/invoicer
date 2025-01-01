@@ -40,10 +40,13 @@ def main():
     title = document.get('title')
     print(title)
 
+    invoice_total = dataframe_db['invoice_total'].iloc[0]
+
     params = {
         'invoiceNumber': str(invoice_number),
         'date': invoice_date,
-        'ua_date': getUADateWithDate(invoice_date)
+        'ua_date': getUADateWithDate(invoice_date),
+        'invoice_total': invoice_total
     }
 
     result = replace_template_values(document_id=document_copy_id, params=params)
