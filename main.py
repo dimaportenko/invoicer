@@ -75,7 +75,8 @@ def main():
     email_cc_str = ','.join(email_cc)
 
     # Get the previous month date
-    previous_month_date = datetime.today() - relativedelta(months=1)
+    # comment - relativedelta(months=1) to have current month not previous
+    previous_month_date = datetime.today() # - relativedelta(months=1)
     month_date = previous_month_date.strftime('%B %Y')
     subject = f'Invoice #{invoice_number} {month_date}'
 
