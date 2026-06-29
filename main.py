@@ -1,18 +1,21 @@
+import argparse
+import os
+
 from drive_service import copy_invoice_template, export_pdf
 from gmail_service import gmail_create_draft_with_attachment, gmail_create_message_with_attachment
 from sheet_service import get_invoice_number, get_db_sheet, add_invoice_record_to_sheet
 from docs_service import get_document, replace_template_values
 from utils import getUADateWithDate
+from config import TEMPLATE_DOC_ID, TEMPLATE_DOC_ID_SIGNED
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 
-def main(): 
+def main(signed=False, no_draft=False, download=False, no_track=False):
     invoice_number = 0
     invoice_date = datetime.today().strftime('%m/%d/%Y')
     print(invoice_date)
 
-    invoice_number = get_invoice_number()
+    invoice_number = get_invoice_number(increment=not no_track)
 
     if (invoice_number is None):
         print("ERR!! Can't retrieve invoice number")
@@ -23,8 +26,13 @@ def main():
         print("ERR!! Can't retrieve db")
         return 0
 
+    template_id = TEMPLATE_DOC_ID_SIGNED if signed else TEMPLATE_DOC_ID
+    if (template_id is None):
+        print("ERR!! Template id is not configured")
+        return 0
+
     doc_title = dataframe_db['invoice_title'].iloc[0] + '_' + str(invoice_number)
-    document_copy_id = copy_invoice_template(doc_title=doc_title)
+    document_copy_id = copy_invoice_template(doc_title=doc_title, template_id=template_id)
     if (document_copy_id is None):
         print("ERR!! Can't retrieve invoice template")
         return 0
@@ -67,7 +75,30 @@ def main():
         print("ERR!! Can't export pdf")
         return 0
 
+    if download:
+        downloads_path = os.path.expanduser(f'~/Downloads/{title}.pdf')
+        with open(downloads_path, 'wb') as f:
+            f.write(pdf_file.getbuffer())
+        print(f'Saved to {downloads_path}')
 
+
+    if no_draft:
+        print('Skipping email draft creation')
+    else:
+        create_draft(dataframe_db, invoice_number, pdf_file_path)
+
+    if no_track:
+        print('Skipping invoice record tracking')
+    else:
+        invoice_doc_link = f'https://docs.google.com/document/d/{document_copy_id}/edit'
+        add_invoice_record_to_sheet({
+            'invoice_number': invoice_number,
+            'invoice_date': invoice_date,
+            'invoice_doc': invoice_doc_link,
+        })
+
+
+def create_draft(dataframe_db, invoice_number, pdf_file_path):
     # get first value from pandas dataframe email_to column
     email_to = dataframe_db['email_to'].iloc[0]
     # get not empty values from email_cc column
@@ -104,15 +135,19 @@ def main():
 
     gmail_create_draft_with_attachment(message=message)
 
-    invoice_doc_link = f'https://docs.google.com/document/d/{document_copy_id}/edit'
-    add_invoice_record_to_sheet({
-        'invoice_number': invoice_number,
-        'invoice_date': invoice_date,
-        'invoice_doc': invoice_doc_link,
-    })
-        
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate an invoice.')
+    parser.add_argument('--signed', action='store_true',
+                        help='Use the signed invoice template (TEMPLATE_DOC_ID_SIGNED).')
+    parser.add_argument('--no-draft', action='store_true',
+                        help="Don't create the Gmail draft.")
+    parser.add_argument('--download', action='store_true',
+                        help='Also save the final PDF into ~/Downloads.')
+    parser.add_argument('--no-track', action='store_true',
+                        help="Don't increment the invoice number or add a record to the sheet.")
+    args = parser.parse_args()
 
-if __name__ == "__main__": 
-    main()
+    main(signed=args.signed, no_draft=args.no_draft, download=args.download,
+         no_track=args.no_track)
 

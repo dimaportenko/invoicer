@@ -30,7 +30,7 @@ def get_db_sheet():
     return df
      
 
-def get_invoice_number():
+def get_invoice_number(increment=True):
 
     df = get_db_sheet()
     if df is None:
@@ -42,8 +42,10 @@ def get_invoice_number():
     # print df where Date is not empty
     not_null_df = df[df["invoice_date"].notnull() & df["invoice_number"].notnull()]
 
-    # maximum invoice number + 1
-    invoice_number = int(not_null_df["invoice_number"].max()) + 1
+    # maximum invoice number (+ 1 unless increment is disabled)
+    invoice_number = int(not_null_df["invoice_number"].max())
+    if increment:
+        invoice_number += 1
     print('--- invoice_number ---')
     print(invoice_number)
     

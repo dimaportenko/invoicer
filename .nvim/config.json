@@ -1,5 +1,6 @@
 {
   "commands": {
-    "venv:run": "source .venv/bin/activate; python main.py"
-   }
+    "venv:run": "source .venv/bin/activate; python main.py",
+    "venv:run:signed": "source .venv/bin/activate; python main.py --signed --no-draft --download --no-track"
+  }
 }

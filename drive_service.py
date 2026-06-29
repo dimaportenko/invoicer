@@ -9,7 +9,7 @@ from config import TEMPLATE_DOC_ID
 
 drive_service = get_google_service('drive', 'v3')
 
-def copy_invoice_template(doc_title: str):
+def copy_invoice_template(doc_title: str, template_id: str = TEMPLATE_DOC_ID):
     body = {
         'name': doc_title,
     }
@@ -17,11 +17,11 @@ def copy_invoice_template(doc_title: str):
     if drive_service is None:
         return None
 
-    if TEMPLATE_DOC_ID is None:
+    if template_id is None:
         return None
 
     # Call the Drive v3 API
-    drive_response = drive_service.files().copy(fileId=TEMPLATE_DOC_ID, body=body).execute()
+    drive_response = drive_service.files().copy(fileId=template_id, body=body).execute()
     document_copy_id: str = drive_response.get('id')
 
     return document_copy_id
